@@ -4,7 +4,6 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# 全局环境变量，配置国内镜像
 env:
   PUB_HOSTED_URL: https://pub.flutter-io.cn
   FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
@@ -19,10 +18,10 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # 修改成你的项目实际Flutter版本！
+          flutter-version: '3.22.0'
           cache: true
 
-      - name: 关闭Flutter统计分析（避免卡住）
+      - name: 关闭Flutter统计分析
         run: flutter config --no-analytics
 
       - name: 接受Android SDK协议

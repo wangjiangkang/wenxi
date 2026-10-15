@@ -1,0 +1,32 @@
+name: Build Flutter APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # 网页手动触发打包
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Flutter环境
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0' # 可以改成你项目对应的flutter版本
+
+      - name: 查看flutter版本
+        run: flutter --version
+
+      - name: 安装依赖
+        run: flutter pub get
+
+      - name: 打包Release APK
+        run: flutter build apk --release
+
+      - name: 上传APK构件
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

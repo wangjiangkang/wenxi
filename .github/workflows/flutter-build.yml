@@ -2,31 +2,43 @@ name: Build Flutter APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 网页手动触发打包
+  workflow_dispatch:
+
+# 全局环境变量，配置国内镜像
+env:
+  PUB_HOSTED_URL: https://pub.flutter-io.cn
+  FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出代码
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 设置Flutter环境
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # 可以改成你项目对应的flutter版本
+          flutter-version: '3.22.0' # 修改成你的项目实际Flutter版本！
+          cache: true
 
-      - name: 查看flutter版本
-        run: flutter --version
+      - name: 关闭Flutter统计分析（避免卡住）
+        run: flutter config --no-analytics
+
+      - name: 接受Android SDK协议
+        run: yes | flutter doctor --android-licenses
+
+      - name: Flutter Doctor
+        run: flutter doctor
 
       - name: 安装依赖
         run: flutter pub get
 
-      - name: 打包Release APK
-        run: flutter build apk --release
+      - name: 打包Debug APK
+        run: flutter build apk --debug
 
-      - name: 上传APK构件
+      - name: 上传APK
         uses: actions/upload-artifact@v4
         with:
-          name: flutter-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: flutter-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
